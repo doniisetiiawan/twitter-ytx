@@ -33,14 +33,20 @@ module.exports = (passport) => {
                 return done(
                   null,
                   false,
-                  req.send('No user found.'),
+                  req.flash(
+                    'loginMessage',
+                    'No user found.',
+                  ),
                 );
               }
               if (!user.validPassword(password)) {
                 return done(
                   null,
                   false,
-                  req.send('Wohh! Wrong password.'),
+                  req.flash(
+                    'loginMessage',
+                    'Wohh! Wrong password.',
+                  ),
                 );
               }
               return done(null, user);
@@ -73,7 +79,8 @@ module.exports = (passport) => {
                   return done(
                     null,
                     false,
-                    req.send(
+                    req.flash(
+                      'signupMessage',
                       'Wohh! the email is already taken.',
                     ),
                   );

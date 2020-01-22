@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
+const flash = require('connect-flash');
 
 const routes = require('./server/routes/index');
 
@@ -41,6 +42,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 
 app.use('/', routes);
 
