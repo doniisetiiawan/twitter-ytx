@@ -1,4 +1,7 @@
 const express = require('express');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -7,6 +10,7 @@ const passport = require('passport');
 const flash = require('connect-flash');
 
 const routes = require('./server/routes/index');
+const users = require('./server/routes/users');
 
 const comments = require('./server/controllers/comments');
 
@@ -28,6 +32,11 @@ mongoose.connection.on('error', () => {
 
 require('./server/config/passport')(passport);
 
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
@@ -47,7 +56,7 @@ app.use(passport.session());
 app.use(flash());
 
 app.use('/', routes);
-
+app.use('/users', users);
 app.get(
   '/comments',
   comments.hasAuthorization,
@@ -63,6 +72,24 @@ app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
   next(err);
+});
+
+if (app.get('env') === 'development') {
+  app.use((err, req, res) => {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err,
+    });
+  });
+}
+
+app.use((err, req, res) => {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {},
+  });
 });
 
 app.listen(app.get('port'), () => {
