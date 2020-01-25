@@ -8,6 +8,8 @@ const flash = require('connect-flash');
 
 const routes = require('./server/routes/index');
 
+const comments = require('./server/controllers/comments');
+
 const app = express();
 app.set('port', process.env.PORT || 3000);
 
@@ -45,6 +47,17 @@ app.use(passport.session());
 app.use(flash());
 
 app.use('/', routes);
+
+app.get(
+  '/comments',
+  comments.hasAuthorization,
+  comments.list,
+);
+app.post(
+  '/comments',
+  comments.hasAuthorization,
+  comments.create,
+);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');

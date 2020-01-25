@@ -35,7 +35,7 @@ function isLoggedIn(req, res, next) {
   res.redirect('/login');
 }
 
-router.get('/profile', isLoggedIn, (req, res, next) => {
+router.get('/profile', isLoggedIn, (req, res) => {
   res.send('Profile Page');
 });
 
